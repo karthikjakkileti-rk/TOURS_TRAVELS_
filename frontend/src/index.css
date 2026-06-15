@@ -1,0 +1,142 @@
+@import 'leaflet/dist/leaflet.css';
+
+:root {
+  --primary-color: #0d47a1; /* Deep Professional Blue */
+  --primary-light: #1e88e5;
+  --primary-dark: #0a2f6c;
+  --secondary-color: #f5f7fa; /* Clean White/Gray background */
+  --accent-color: #00e676; /* Green for success/milestones */
+  --warning-color: #ff3d00; /* Red for delay alerts */
+  --text-dark: #1e293b;
+  --text-light: #64748b;
+  --bg-gradient: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+  --border-radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', 'Inter', 'Segoe UI', Roboto, sans-serif;
+  background-color: #f8fafc;
+  color: var(--text-dark);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Leaflet map sizing container helper */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+  box-shadow: var(--glass-shadow);
+  z-index: 1;
+}
+
+/* Glassmorphism panel styling */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--border-radius);
+}
+
+/* Micro-animations */
+@keyframes pulseRed {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 61, 0, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(255, 61, 0, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 61, 0, 0);
+  }
+}
+
+.delay-pulse-badge {
+  animation: pulseRed 2s infinite;
+  background-color: var(--warning-color);
+  color: white;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -10px rgba(13, 71, 161, 0.15);
+}
+
+/* Timeline Custom styles */
+.timeline-item {
+  position: relative;
+  padding-left: 30px;
+  padding-bottom: 20px;
+}
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e2e8f0;
+}
+.timeline-item:last-child::before {
+  display: none;
+}
+.timeline-badge {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  border: 4px solid #fff;
+  box-shadow: 0 0 0 1px #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.timeline-badge.completed {
+  background: var(--accent-color);
+  box-shadow: 0 0 0 1px var(--accent-color);
+}
+.timeline-badge.active {
+  background: var(--primary-light);
+  box-shadow: 0 0 0 1px var(--primary-light);
+  animation: pulseRed 2s infinite; /* Uses red-style glow, or blue pulse */
+}
