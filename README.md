@@ -1,7 +1,9 @@
 # GPS-Based Trip Tracking Dashboard
 **Enterprise Fleet & Booking Operations System for Manivtha Tours & Travels**
 
-This repository contains the complete, production-ready full-stack web application designed for **Manivtha Tours & Travels** to manage vehicle fleets, assign drivers, schedule passenger bookings, track active trips in real-time, and monitor delays.
+🌐 **[👉 CLICK HERE TO OPEN THE LIVE PROJECT UI 👈](https://karthikjakkileti-rk.github.io/TOURS_TRAVELS_/)**
+
+*(No installation required to run! Log in using: **admin@manivtha.com** / **admin123**)*
 
 ---
 
