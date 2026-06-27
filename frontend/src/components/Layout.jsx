@@ -5,7 +5,7 @@ import axios from 'axios';
 import {
   AppBar, Box, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton,
   ListItemIcon, ListItemText, Toolbar, Typography, Badge, Menu, MenuItem,
-  Divider, Tooltip, Avatar, Button, Paper
+  Divider, Tooltip, Avatar, Button, Paper, Popover
 } from '@mui/material';
 import {
   Menu as MenuIcon, Dashboard, DirectionsCar, People, Assignment,
@@ -24,6 +24,17 @@ const Layout = ({ children }) => {
   const [anchorElNotif, setAnchorElNotif] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const formatTime = (dateStr) => {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch (e) {
+      return '';
+    }
+  };
 
   const fetchNotifications = async () => {
     try {
@@ -187,10 +198,18 @@ const Layout = ({ children }) => {
               </IconButton>
             </Tooltip>
             
-            <Menu
+            <Popover
               anchorEl={anchorElNotif}
               open={Boolean(anchorElNotif)}
               onClose={handleCloseNotifMenu}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
               PaperProps={{
                 sx: { width: 320, maxHeight: 400, mt: 1.5, borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }
               }}
@@ -229,14 +248,14 @@ const Layout = ({ children }) => {
                           {notif.message}
                         </Typography>
                         <Typography variant="caption" color="textSecondary" fontSize={9} sx={{ display: 'block', mt: 0.5 }}>
-                          {new Date(notif.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {formatTime(notif.created_at)}
                         </Typography>
                       </Box>
                     </ListItem>
                   ))
                 )}
               </List>
-            </Menu>
+            </Popover>
 
             {/* Profile Avatar */}
             <Tooltip title="Open settings">
