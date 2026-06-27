@@ -46,6 +46,17 @@ const mockState = {
   ratings: []
 };
 
+// Helper to safely parse JSON or return original object
+const getRequestData = (config) => {
+  if (!config.data) return {};
+  if (typeof config.data === 'object') return config.data;
+  try {
+    return JSON.parse(config.data);
+  } catch (e) {
+    return {};
+  }
+};
+
 // Setup mock adapter
 axios.interceptors.request.use(async (config) => {
   if (!useMockMode) {
@@ -73,7 +84,7 @@ axios.interceptors.request.use(async (config) => {
 
   // 1. Auth Endpoint Mocks
   if (url === '/api/auth/login') {
-    const { email } = JSON.parse(config.data);
+    const { email } = getRequestData(config);
     const foundUser = mockState.users.find(u => u.email === email) || { id: 1, name: 'Manivtha Admin', email: email, role: 'admin' };
     return mockResponse({ success: true, token: 'mock-jwt-token', user: foundUser });
   }
@@ -127,7 +138,7 @@ axios.interceptors.request.use(async (config) => {
       return mockResponse({ success: true, data: mockState.vehicles });
     }
     if (method === 'POST') {
-      const data = JSON.parse(config.data);
+      const data = getRequestData(config);
       const newVeh = { id: mockState.vehicles.length + 1, ...data };
       mockState.vehicles.push(newVeh);
       return mockResponse({ success: true, data: newVeh });
@@ -136,7 +147,7 @@ axios.interceptors.request.use(async (config) => {
   if (url.startsWith('/api/vehicles/')) {
     const id = parseInt(url.split('/').pop());
     if (method === 'PUT') {
-      const data = JSON.parse(config.data);
+      const data = getRequestData(config);
       const idx = mockState.vehicles.findIndex(v => v.id === id);
       if (idx !== -1) {
         mockState.vehicles[idx] = { ...mockState.vehicles[idx], ...data };
@@ -155,7 +166,7 @@ axios.interceptors.request.use(async (config) => {
       return mockResponse({ success: true, data: mockState.drivers });
     }
     if (method === 'POST') {
-      const data = JSON.parse(config.data);
+      const data = getRequestData(config);
       const newDrv = { id: mockState.drivers.length + 1, ...data };
       mockState.drivers.push(newDrv);
       return mockResponse({ success: true, data: newDrv });
@@ -168,7 +179,7 @@ axios.interceptors.request.use(async (config) => {
       return mockResponse({ success: true, data: mockState.bookings });
     }
     if (method === 'POST') {
-      const data = JSON.parse(config.data);
+      const data = getRequestData(config);
       const newB = { id: mockState.bookings.length + 1, ...data, trip_date: new Date().toISOString() };
       mockState.bookings.push(newB);
       
@@ -243,7 +254,7 @@ axios.interceptors.request.use(async (config) => {
   if (url.includes('/payment') && method === 'POST') {
     const parts = url.split('/');
     const bookingId = parseInt(parts[3]);
-    const data = JSON.parse(config.data);
+    const data = getRequestData(config);
     const existing = mockState.payments.findIndex(p => p.booking_id === bookingId);
     if (existing !== -1) {
       mockState.payments[existing] = { ...mockState.payments[existing], ...data };
@@ -255,14 +266,14 @@ axios.interceptors.request.use(async (config) => {
   if (url.includes('/complaint') && method === 'POST') {
     const parts = url.split('/');
     const bookingId = parseInt(parts[3]);
-    const data = JSON.parse(config.data);
+    const data = getRequestData(config);
     mockState.complaints.push({ id: mockState.complaints.length + 1, booking_id: bookingId, ...data, created_at: new Date().toISOString() });
     return mockResponse({ success: true });
   }
   if (url.includes('/rating') && method === 'POST') {
     const parts = url.split('/');
     const bookingId = parseInt(parts[3]);
-    const data = JSON.parse(config.data);
+    const data = getRequestData(config);
     mockState.ratings.push({ id: mockState.ratings.length + 1, booking_id: bookingId, ...data, created_at: new Date().toISOString() });
     return mockResponse({ success: true });
   }
