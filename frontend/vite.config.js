@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite';
 
-export default defineConfig({
-  base: '/TOURS_TRAVELS_/',
+export default defineConfig(({ mode }) => {
+  return {
+    base: mode === 'production' ? '/TOURS_TRAVELS_/' : '/',
+  };
 });
