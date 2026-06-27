@@ -63,9 +63,9 @@ axios.interceptors.request.use(async (config) => {
     return config;
   }
 
-  // Normalize URL and method
-  const url = config.url;
-  const method = config.method.toUpperCase();
+  // Normalize URL and method safely
+  const url = config.url || '';
+  const method = (config.method || 'get').toUpperCase();
 
   // Helper to simulate Axios response wrapper inside a rejected promise (caught by response interceptor)
   const mockResponse = (data, status = 200) => {
