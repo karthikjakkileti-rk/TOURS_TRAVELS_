@@ -282,6 +282,62 @@ axios.interceptors.request.use(async (config) => {
     });
   }
 
+  // 6.5 Live Tracking Mock
+  if (url.startsWith('/api/trips/tracking/')) {
+    const uid = decodeURIComponent(url.split('/').pop());
+    // Search for trip by trip_uid
+    let trip = mockState.trips.find(t => t.trip_uid === uid);
+    
+    // Fallback: Search by vehicle_number
+    if (!trip) {
+      const vehicle = mockState.vehicles.find(v => v.vehicle_number === uid);
+      if (vehicle) {
+        const booking = mockState.bookings.find(b => b.vehicle_id === vehicle.id);
+        if (booking) {
+          trip = mockState.trips.find(t => t.booking_id === booking.id);
+        }
+      }
+    }
+    
+    // Default fallback
+    if (!trip) {
+      trip = mockState.trips[0];
+    }
+    
+    const booking = mockState.bookings.find(b => b.id === trip.booking_id) || mockState.bookings[0];
+    const vehicle = mockState.vehicles.find(v => v.id === booking.vehicle_id) || mockState.vehicles[0];
+    const driver = mockState.drivers.find(d => d.id === booking.driver_id) || mockState.drivers[0];
+
+    const route_progress_percent = trip.status === 'trip_completed' ? 100 : Math.round((trip.distance_covered / (trip.distance_covered + 10)) * 100) || 45;
+    const remaining_distance = trip.status === 'trip_completed' ? '0.00' : (10.5).toFixed(2);
+
+    return mockResponse({
+      success: true,
+      data: {
+        id: trip.id,
+        booking_id: trip.booking_id,
+        trip_uid: trip.trip_uid,
+        status: trip.status,
+        delay_status: trip.delay_status,
+        eta_minutes: trip.eta_minutes,
+        remaining_distance,
+        route_progress_percent,
+        driver_name: driver ? driver.name : 'Rajesh Kumar',
+        driver_mobile: driver ? driver.mobile_number : '+91 98765 43210',
+        vehicle_number: vehicle ? vehicle.vehicle_number : 'KA-03-ME-1234',
+        current_latitude: trip.current_lat || 12.9716,
+        current_longitude: trip.current_lng || 77.5946,
+        pickup_latitude: 12.9716,
+        pickup_longitude: 77.5946,
+        drop_latitude: 13.1986,
+        drop_longitude: 77.7066,
+        pickup_location: booking.pickup_location || 'Indiranagar',
+        drop_location: booking.drop_location || 'Kempegowda Airport',
+        current_address: 'St. John\'s Road, Bangalore'
+      }
+    });
+  }
+
   // Update trip payments, complaints, ratings
   if (url.includes('/payment') && method === 'POST') {
     const parts = url.split('/');
