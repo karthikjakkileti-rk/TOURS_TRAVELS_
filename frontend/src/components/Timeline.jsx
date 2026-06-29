@@ -76,15 +76,35 @@ function ColorlibStepIcon(props) {
   );
 }
 
+const getNormalizedStepIndex = (status) => {
+  const statusMapping = {
+    'created': 0,
+    'booking_created': 0,
+    'assigned': 1,
+    'driver_assigned': 1,
+    'dispatched': 2,
+    'vehicle_dispatched': 2,
+    'reached_pickup': 3,
+    'driver_reached_pickup': 3,
+    'pickup_completed': 4,
+    'trip_started': 5,
+    'trip_in_progress': 5,
+    'drop_completed': 6,
+    'completed': 7,
+    'trip_completed': 7
+  };
+  return statusMapping[status] !== undefined ? statusMapping[status] : 0;
+};
+
 const Timeline = ({ currentStatus }) => {
-  // Find index of current status in workflow steps list
-  const activeStep = workflowSteps.findIndex(step => step.key === currentStatus);
+  // Find index of current status in workflow steps list using normalization
+  const activeStep = getNormalizedStepIndex(currentStatus);
 
   return (
     <Box sx={{ width: '100%', py: 3 }}>
       <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
         {workflowSteps.map((step, index) => (
-          <Step key={step.key} completed={index < activeStep || currentStatus === 'trip_completed'}>
+          <Step key={step.key} completed={index < activeStep || currentStatus === 'trip_completed' || currentStatus === 'completed'}>
             <StepLabel 
               StepIconComponent={ColorlibStepIcon}
               StepIconProps={{ icon: index + 1 }}
