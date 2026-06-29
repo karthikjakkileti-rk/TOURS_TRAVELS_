@@ -64,7 +64,33 @@ axios.interceptors.request.use(async (config) => {
   }
 
   // Normalize URL and method safely
-  const url = config.url || '';
+  let url = config.url || '';
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    try {
+      url = new URL(url).pathname;
+    } catch (e) {
+      url = url.replace(/^https?:\/\/[^\/]+/, '');
+    }
+  }
+  // Strip baseURL if it's still present in the path
+  if (config.baseURL) {
+    let cleanBase = config.baseURL;
+    if (cleanBase.startsWith('http://') || cleanBase.startsWith('https://')) {
+      try {
+        cleanBase = new URL(cleanBase).pathname;
+      } catch (e) {
+        cleanBase = cleanBase.replace(/^https?:\/\/[^\/]+/, '');
+      }
+    }
+    if (cleanBase && cleanBase !== '/' && url.startsWith(cleanBase)) {
+      url = url.slice(cleanBase.length);
+    }
+  }
+  // Ensure it starts with a slash
+  if (url && !url.startsWith('/')) {
+    url = '/' + url;
+  }
+
   const method = (config.method || 'get').toUpperCase();
 
   // Helper to simulate Axios response wrapper inside a rejected promise (caught by response interceptor)
