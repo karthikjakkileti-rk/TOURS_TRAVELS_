@@ -123,37 +123,43 @@ axios.interceptors.request.use(async (config) => {
     return mockResponse({
       success: true,
       data: {
-        totalVehicles: mockState.vehicles.length,
-        activeTrips: mockState.trips.filter(t => t.status !== 'trip_completed').length,
-        completedTrips: mockState.trips.filter(t => t.status === 'trip_completed').length,
-        delayedTrips: mockState.trips.filter(t => t.delay_status === 'delayed').length,
-        totalDrivers: mockState.drivers.length,
-        totalRevenue: 4000.00
-      }
-    });
-  }
-  if (url === '/api/dashboard/charts') {
-    return mockResponse({
-      success: true,
-      data: {
-        bookingsTrend: [
-          { date: 'Mon', count: 3 },
-          { date: 'Tue', count: 4 },
-          { date: 'Wed', count: 2 },
-          { date: 'Thu', count: 5 },
-          { date: 'Fri', count: 6 },
-          { date: 'Sat', count: 4 },
-          { date: 'Sun', count: 2 }
-        ],
-        revenueTrend: [
-          { date: 'Mon', amount: 1500 },
-          { date: 'Tue', amount: 2500 },
-          { date: 'Wed', amount: 1000 },
-          { date: 'Thu', amount: 3500 },
-          { date: 'Fri', amount: 4500 },
-          { date: 'Sat', amount: 3000 },
-          { date: 'Sun', amount: 1200 }
-        ]
+        cards: {
+          totalVehicles: mockState.vehicles.length,
+          activeTrips: mockState.trips.filter(t => t.status !== 'trip_completed').length,
+          completedTrips: mockState.trips.filter(t => t.status === 'trip_completed').length,
+          delayedTrips: mockState.trips.filter(t => t.delay_status === 'delayed').length,
+          totalDrivers: mockState.drivers.length,
+          totalRevenue: 4000.00
+        },
+        charts: {
+          vehicleUtilization: [
+            { status: 'available', count: mockState.vehicles.filter(v => v.status === 'available').length },
+            { status: 'on_trip', count: mockState.vehicles.filter(v => v.status === 'on_trip').length },
+            { status: 'maintenance', count: mockState.vehicles.filter(v => v.status === 'maintenance').length }
+          ],
+          delayBreakdown: [
+            { delay_status: 'on_time', count: mockState.trips.filter(t => t.delay_status === 'on_time').length },
+            { delay_status: 'delayed', count: mockState.trips.filter(t => t.delay_status === 'delayed').length }
+          ],
+          tripsPerDay: [
+            { date: 'Mon', count: 3 },
+            { date: 'Tue', count: 4 },
+            { date: 'Wed', count: 2 },
+            { date: 'Thu', count: 5 },
+            { date: 'Fri', count: 6 },
+            { date: 'Sat', count: 4 },
+            { date: 'Sun', count: 2 }
+          ],
+          revenuePerDay: [
+            { date: 'Mon', amount: 1500 },
+            { date: 'Tue', amount: 2500 },
+            { date: 'Wed', amount: 1000 },
+            { date: 'Thu', amount: 3500 },
+            { date: 'Fri', amount: 4500 },
+            { date: 'Sat', amount: 3000 },
+            { date: 'Sun', amount: 1200 }
+          ]
+        }
       }
     });
   }
